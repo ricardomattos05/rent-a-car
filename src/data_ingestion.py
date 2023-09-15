@@ -39,7 +39,7 @@ def insert_data_from_csv_to_db(conn: sqlite3.Connection, file_path: str, table_n
         df = pd.read_csv(file_path, delimiter=delimiter)
 
         # Clean the data if it's from the Vehicle_Rentals.csv
-        if table_name == "Vehicle_Rentals":
+        if table_name == "ft_vehicle_Rentals":
             df = clean_dates(df)
 
         # Convert the cleaned DataFrame back to CSV format to use the original insertion logic

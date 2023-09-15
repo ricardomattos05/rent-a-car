@@ -4,6 +4,7 @@ import logging
 from data_ingestion import insert_data_from_csv_to_db
 from database import DatabaseError
 from database import create_connection
+from database import create_index
 from database import setup_database
 
 
@@ -34,8 +35,12 @@ def main():
         setup_database(conn, sql_files)
         logging.info("Database setup completed.")
 
-        insert_data_from_csv_to_db(conn, "data/Vehicle_Rentals.csv", "Vehicle_Rentals")
-        insert_data_from_csv_to_db(conn, "data/Locations.csv", "Locations")
+        insert_data_from_csv_to_db(conn, "data/Vehicle_Rentals.csv", "ft_vehicle_Rentals")
+        insert_data_from_csv_to_db(conn, "data/Locations.csv", "dm_locations")
+
+        create_index(conn, "ft_vehicle_Rentals", "Location_ID")
+        create_index(conn, "ft_vehicle_Rentals", "Rental_ID")
+        create_index(conn, "dm_locations", "Location_ID")
 
         logging.info("Initialization and data ingestion were successful!")
 
