@@ -100,7 +100,7 @@ make docker-etl
 
 2. **Visualization**
 
-Start the dashboard by executing src/app.py and access via your browser at the specified address with the command:
+Start the dashboard by accessing this [url](http://rentcardash.duckdns.org:8050/) or executing src/app.py and access via your browser at the specified address with the command:
 
 ```
 make docker-app
@@ -135,7 +135,7 @@ The business logic and questions raised can be found in the [pdf](https://github
 
 #### 5. Using a data visualization tool of your choice (e.g., Matplotlib, Seaborn, Tableau), create a dashboard that shows
 
-- The code to generate the dash can be found in the file [src/app.py](https://github.com/ricardomattos05/rent-a-car/blob/main/src/app.py). To run the app reference to [How to Run](#how-to-run).
+- The code to generate the dash can be found in the file [src/app.py](https://github.com/ricardomattos05/rent-a-car/blob/main/src/app.py). To run the app reference to [How to Run](#how-to-run). If you just want to check it out, you can access the public [url](http://rentcardash.duckdns.org:8050/) available.
 
 <p align="left">
   <img src="images/app1.png" width="600" alt="Screenshot of the application">
