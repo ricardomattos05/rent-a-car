@@ -34,16 +34,11 @@ service_account.json
 
 # Project specific files
 .DS_Store
-src/aux.py
-src/note.py
-logs/
 **/python/**
 **/psycopg2-binary/**
 **/.vscode/**
 *.zip
-process_dev.py
-utils.py
-test.py
+aux
 
 # AWS SAM
 .aws-sam/

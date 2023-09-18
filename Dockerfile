@@ -1,9 +1,17 @@
-FROM public.ecr.aws/sam/build-python3.9:latest-x86_64
+# Use a specific Python version
+FROM python:3.11.2
 
-RUN yum -y update && yum install -y zip
-
-ARG FUNCTION_DIR
+# Set the working directory
 WORKDIR /app
 
-COPY ${FUNCTION_DIR}/requirements.txt .
+# Copy everything to the working directory
+COPY . .
+
+# Install the required packages
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Execute the ETL
+CMD ["python", "src/main.py"]
+
+# Start the Dash app
+CMD ["python", "src/app.py"]

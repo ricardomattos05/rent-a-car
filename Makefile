@@ -83,38 +83,28 @@ checkov-baseline: synth ## Run checkov and create a new baseline for future chec
 	checkov --config-file .checkov --create-baseline --soft-fail
 	mv cdk.out/.checkov.baseline .checkov.baseline
 
-.PHONY: build
-build: ## Build the Docker image for local Lambda development
-	sam build --use-container
+###### Docker Commands
 
+.PHONY: docker-build
+docker-build: ## Build Docker containers
+	docker-compose build
 
-FUNCTION_DIR ?= src/bronze/source/table
-FUNCTION_BUILD_DIR = $(FUNCTION_DIR)/build
-BASE_DIR = $(firstword $(subst /, ,$(FUNCTION_DIR)))/$(word 2,$(subst /, ,$(FUNCTION_DIR)))
-UTILS_DIR = $(BASE_DIR)/utils
+.PHONY: docker-start
+docker-start: ## Start ETL and Dash app using Docker
+	docker-compose up
 
-package-dependencies:
-	docker build -t lambda-dependencies --build-arg FUNCTION_DIR=$(FUNCTION_DIR) .
-	docker run --rm -v $(PWD)/$(FUNCTION_DIR):/output lambda-dependencies bash -c "mkdir /output/python && cp -r /var/lang/lib/python3.9/site-packages/* /output/python && cd /output && zip -r python.zip python"
+.PHONY: docker-stop
+docker-stop: ## Stop all running Docker containers related to this project
+	docker-compose down
 
+.PHONY: docker-logs
+docker-logs: ## View real-time logs from the Docker containers
+	docker-compose logs -f
 
-.PHONY: package
-package: package-dependencies ## Package the Lambda function code and dependencies for deployment. Define FUNCTION_DIR=src/layer/source/table to package a specific function
-	mkdir -p $(FUNCTION_BUILD_DIR)
-	find $(FUNCTION_DIR) -type f -name "*.py" ! -name "__init__.py" ! -path "*/__pycache__/*" ! -path "*/python/*" -exec cp {} $(FUNCTION_BUILD_DIR) \;
-	cp -r $(UTILS_DIR)/* $(FUNCTION_BUILD_DIR)/
-	cd $(FUNCTION_BUILD_DIR) && zip -r ../package.zip * -x "*__init__.py" -x "*__pycache__/*"
-	rm -r $(FUNCTION_DIR)/build
-	rm -r $(FUNCTION_DIR)/python
-# Set FUNCTION_DIR to run the package command and create python.zip and package.zip for the layer and table you want to:
-# make package FUNCTION_DIR=src/bronze/source/table
+.PHONY: docker-etl
+docker-etl: ## Run the ETL process using Docker
+	docker-compose run etl
 
-.PHONY: invoke-local-bronze-endpoint1
-invoke-local-bronze-endpoint1: ## Invoke the Bronze Endpoint1 Lambda function locally using SAM
-	@echo "Invoking Lambda function $(function) locally"
-	sam local invoke BronzeSourceTableFunction -e event.json
-# add other functions for locally invoke using SAM
-
-.PHONY: deploy
-deploy: ## Deploy the Lambda function to AWS
-	sam deploy --template-file packaged.yaml --stack-name $(shell cat config.json | jq -r '.stack_name') --capabilities $(shell cat config.json | jq -r '.capabilities') --profile $(shell cat config.json | jq -r '.profile')
+.PHONY: docker-app
+docker-app: ## Start only the Dash app using Docker
+	docker-compose up dash-app

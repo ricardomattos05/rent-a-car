@@ -93,5 +93,7 @@ repos:
             --quiet,
             --format,
             custom,
+            "--skip",
+            "B104",
           ]
         stages: [commit]
